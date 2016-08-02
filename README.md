@@ -7,7 +7,6 @@ Grism allows you to track your favorite stocks in one of 2 modes:
 1. Watchlist - See the stock's current price as well as a watch start
 price so you can track how the stock has done since you began watching
 it.
-
 2. Portfolio - See the stock's current price as well as the price at
 which it was purchased, the number of shares involved and gain/loss
 calculations.
