@@ -1,0 +1,327 @@
+#!/usr/bin/ruby
+#                                 Grism
+#             An open source, stock market observation tool
+#
+# Homepage: http://www.grism.org
+#
+# Grism is an open source stock market observation tool. It allows you
+# to easily track the evolution of stock prices through watchlists,
+# portfolios and charts.
+#
+# Grism uses Yahoo! Finance for its quote data. This means that with
+# Grism, you can observe stocks, ETFs, indices and mutual funds from
+# every major stock market in the world. All you need is the stock's
+# symbol that interests you.
+#
+# Features:
+#
+# 1. Watchlists - Monitor the evolution of a stock's price from a
+# starting price through the last trade.
+#
+# 2. Portfolios - See the current gain/loss calculation for a set of stocks.
+#
+# 3. Charts - View dynamic, historical price charts for monitored stocks.
+#
+#
+# Copyright (c) 2007 Nicholas Rahn <nick at transparentech.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+
+# Load the base preferences module.
+require 'grism/grism_prefs'
+# Initialize the preferences to default values.
+$PREFS = GRISM.init_prefs
+# Figure out the config dir (including which platform we are running
+# on).
+GRISM.config_dir
+# Do the windows setup (if we are on a windows platform).
+GRISM.windows_exe_setup
+# Requre Gtk here as we may display popup windows if there were
+# problems with the config dir or user preferences.
+require 'gtk2'
+# Setup the config directory and load the user config.
+GRISM.init_config_dir #( $options.configdir )
+GRISM.load_user_config
+GRISM.command_line_override_prefs
+
+# Load the file that centralizes the loading of Grism's requirements.
+require 'grism/load_requires'
+# Setup the basedir for static files (images, glade, etc).
+$FPATH = GRISM::FPATH
+# Intialize kirbybase db (historical data).
+GRISM.init_db
+# Initialize mongoose db (watchlist and portfolios).
+GRISM.init_mongoose_db( $PREFS['configdir'] )
+# Initialize proxy settings.
+GRISM.init_proxy_settings
+
+# $PREFS.each do |key, val|
+#  puts "#{key}=#{val}"
+#end
+
+#GRISM.each_config_file_list do |type, file, num|
+#  puts "#{type},#{file},#{num}"
+#end
+#exit 
+
+Gtk.init
+libglade = GladeXML.new( $FPATH + GRISM::GLADE )
+
+# Remove the default tabs.
+libglade['notebook'].remove_page( 2 )
+libglade['notebook'].remove_page( 1 )
+libglade['notebook'].remove_page( 0 )
+
+# Set the non-stock icons and images.
+libglade['watchlist_new_mbtn'].image = 
+  Gtk::Image.new( $FPATH + GRISM::WATCHLIST_ICON_16 )
+libglade['portfolio_new_mbtn'].image = 
+  Gtk::Image.new( $FPATH + GRISM::PORTFOLIO_ICON_16 )
+libglade['chart_mbtn'].image = 
+  Gtk::Image.new( $FPATH + GRISM::CHARTING_ICON_16 )
+
+# Set-up the bottom infobar (progressbar + statusbar).
+infobar = InfoBar.new( libglade['progressbar'], libglade['statusbar'] )
+# Set-up the liststore used in the preferences dialog.
+iconbar = PreferencesIconBar.new( libglade )
+
+# Set some global access points to useful widgets.
+$PREFS['libglade'] = libglade
+$PREFS['infobar'] = infobar
+$PREFS['iconbar'] = iconbar
+$PREFS['tooltips'] = Gtk::Tooltips.new
+$PREFS['prefsdialog'] = PreferencesDialog.new( libglade )
+$PREFS['aboutdialog'] = AboutDialog.new( libglade )
+$PREFS['exchart'] = ExportChartDialog.new( libglade )
+$PREFS['wldialog'] = WatchListDialog.new( libglade )
+$PREFS['pfdialog'] = PortfolioDialog.new( libglade )
+$PREFS['pfhistdialog'] = PortfolioHistoryDialog.new( libglade )
+$PREFS['folderdialog'] = WPListPropertiesDialog.new( libglade )
+$PREFS['splitdialog'] = SplitDialog.new( libglade )
+$PREFS['folders'] = FoldersStore.new
+$PREFS['flist'] = Folders.new( libglade['folderslist'], $PREFS['folders'] )
+$PREFS['mvcpdialog'] = MoveCopyDialog.new( $PREFS['folders'], libglade )
+$PREFS['cashdialog'] = CashDialog.new( libglade )
+$PREFS['renamedialog'] = RenameDialog.new( libglade )
+
+# Set the window icons that are used in the windowing system frame.
+window_icons = [ Gdk::Pixbuf.new( $FPATH + GRISM::GRISM_WINDOW_ICON_16 ),
+                 Gdk::Pixbuf.new( $FPATH + GRISM::GRISM_WINDOW_ICON_32 ),
+                 Gdk::Pixbuf.new( $FPATH + GRISM::GRISM_WINDOW_ICON_48 ) ]
+libglade['grism'].set_icon_list( window_icons )
+Gtk::Window.set_default_icon_list( window_icons )
+
+#Set the size of the main Grism window from the preferences.
+if $PREFS['grism.width'] and $PREFS['grism.height']
+  #puts 'grism size to: #{$PREFS["grism.width"]}x#{$PREFS["grism.height"]}"
+  libglade['grism'].set_default_size( $PREFS['grism.width'].to_i, 
+                                      $PREFS['grism.height'].to_i )
+end
+# Set the size of the left folders list from the preferences.
+if $PREFS['folderslist.width']
+  #puts "folderslist width to: #{$PREFS["folderslist.width"]}"
+  # Set the HPanned position to the size of the folders list.
+  # Add 2 extra pixels that seem to get lost on each run.  shrug.
+  libglade['grism_hpaned'].position = $PREFS['folderslist.width'].to_i + 2
+end
+# Remember the size of the main Grism window when it changes.
+libglade['grism'].signal_connect( 'size-allocate' ) { |win,alloc|
+  $PREFS['grism.width'] = alloc.width
+  $PREFS['grism.height'] = alloc.height
+#  puts "alloc: #{alloc.width}x#{alloc.height}"
+}
+# Remember the size of the left folders list when it changes.
+libglade['folderslist'].signal_connect( 'size-allocate' ) { |widg,alloc|
+  $PREFS['folderslist.width'] = alloc.width
+#  puts "alloc: #{alloc.width}x#{alloc.height}"
+}
+
+# Show the main window.  
+#
+# I would like to do this after loading the folders, but when we do
+# that, the folder columns are not automatically resized (you must
+# reload the data while the treeview is visible for them to be
+# automatically resized).
+#
+libglade['grism'].show
+
+# This does what I want, but putting the loading of the folders here
+# doesn't seem to work as i'd like it to.  So, i'm keeping it the same
+# way as before, but leaving the code (commented) here for future
+# reference.
+# $PREFS['expid'] = libglade['grism'].signal_connect( 'expose_event' ) { 
+#  puts 'GRISM: Expose event!'
+#  libglade['grism'].signal_handler_disconnect( $PREFS['expid'] )
+#}
+
+# Load the folders (watchlists, portfolios) from the database.
+WPList.find_all_by_listtype( 'watchlist', :order => :pos ).each { |row|
+  GRISM.new_wp_widget( row, FoldersStore::FOLDER_WATCHLIST )
+}
+WPList.find_all_by_listtype( 'portfolio', :order => :pos ).each { |row|
+  GRISM.new_wp_widget( row, FoldersStore::FOLDER_PORTFOLIO )
+}
+
+# Set-up the left list of folders.
+$PREFS['flist'].signal_connect( 'switch_to' ) do |type, folder, path|
+  GRISM.menu_folder_sensitivity( type != FoldersStore::FOLDER_PARENT )
+#  GRISM.menu_stock_sensitivity( folder.has_selected? ) if folder
+  folder.switch_to_me() if folder
+  $PREFS['folderslist.selected'] = path.to_s
+end
+$PREFS['flist'].signal_connect( 'watchlists_expanded' ) { 
+  $PREFS['folderslist.watchlists.expanded'] = true
+}
+$PREFS['flist'].signal_connect( 'watchlists_collapsed' ) { 
+  $PREFS['folderslist.watchlists.expanded'] = false
+}
+$PREFS['flist'].signal_connect( 'portfolios_expanded' ) { 
+  $PREFS['folderslist.portfolios.expanded'] = true
+}
+$PREFS['flist'].signal_connect( 'portfolios_collapsed' ) { 
+  $PREFS['folderslist.portfolios.expanded'] = false
+}
+
+$PREFS['folders'].signal_connect( 'remove' ) do |type, folder|
+  GRISM.menu_folder_sensitivity( false )
+  GRISM.menu_stock_sensitivity( false )
+end
+
+#GRISM.menu_folder_sensitivity( false )
+#GRISM.menu_stock_sensitivity( false )
+
+# Expand or not the watchlists and portfolios in the FoldersList based 
+# on the config parameters.
+if $PREFS['folderslist.watchlists.expanded'] == true
+  $PREFS['flist'].expand_watchlists
+end
+if $PREFS['folderslist.portfolios.expanded'] == true
+  $PREFS['flist'].expand_portfolios
+end
+# Select a specific folder based on the config parameters.
+if $PREFS['folderslist.selected']
+  $PREFS['flist'].select_path( $PREFS['folderslist.selected'] )
+end
+
+
+###########################################################################
+# Connect the menu buttons.
+###########################################################################
+
+#
+# File
+#
+
+libglade['watchlist_new_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.new_watchlist_folder()
+}
+
+libglade['portfolio_new_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.new_portfolio_folder()
+}
+
+
+libglade['save_all_mbtn'].signal_connect( 'activate' ) { 
+  $PREFS['folders'].each_iter do |iter|
+    iter[$PREFS['folders'].folder].save
+  end
+}
+
+libglade['refresh_all_mbtn'].signal_connect( 'activate' ) { 
+  # If you are not connected to the net, this will display
+  # the yahoo problem dialog once for every WL or PF you have.
+  # Not the most ideal situation (especially if you have a lot
+  # of WL/PF), but consistent.
+  #
+  $PREFS['folders'].each_iter do |iter|
+    iter[$PREFS['folders'].folder].refresh
+  end
+}
+
+libglade['prefs_mbtn'].signal_connect( 'activate' ) { 
+  $PREFS['prefsdialog'].run() { 
+    GRISM.init_proxy_settings
+  }
+}
+
+libglade['quit_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.shutdown
+}
+
+#
+# Folder
+#
+
+libglade['refresh_mbtn'].signal_connect( 'activate' ) {
+  GRISM.folder_action_activate { |fdr,iter| fdr.refresh }
+}
+libglade['save_folder_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.save }
+}
+libglade['delete_folder_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| GRISM.delete_wplist_folder }
+}
+libglade['properties_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.show_properties }
+}
+
+#
+# Stock
+#
+
+libglade['add_item_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.add_element }
+}
+libglade['details_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.details( iter ) }
+}
+libglade['chart_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.chart( iter ) }
+}
+libglade['remove_item_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.remove_element( iter ) }
+}
+libglade['moveto_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.moveto( iter ) }
+}
+libglade['copyto_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.copyto( iter ) }
+}
+libglade['split_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.split( iter ) }
+}
+libglade['rename_mbtn'].signal_connect( 'activate' ) { 
+  GRISM.folder_action_activate { |fdr,iter| fdr.rename( iter ) }
+}
+
+#
+# Help
+#
+
+libglade['about_mbtn'].signal_connect( 'activate' ) { 
+  $PREFS['aboutdialog'].run
+}
+
+# 
+# Misc signals.
+#
+
+libglade['grism'].signal_connect( 'destroy' ) { 
+  GRISM.shutdown
+}
+
+
+Gtk.main

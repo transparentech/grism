@@ -1,0 +1,26 @@
+Source: grism
+Section: misc
+Priority: extra
+Maintainer: Federico Pampana <fedefede0101@gmail.com>
+Build-Depends: debhelper (>= 5), ruby1.8
+Standards-Version: 3.7.2
+
+Package: grism
+Architecture: all
+Depends: ruby1.8, libgtk2-ruby (>= 0.14), libglade2-ruby (>= 0.14)
+Description: An open source, stock market observation tool
+ It allows you to easily track the evolution of stock prices
+ through watchlists, portfolios and charts.
+ .
+ Grism uses Yahoo! Finance for its quote data.
+ This means that with Grism, you can observe stocks, ETFs, indices
+ and mutual funds from every major stock market in the world.
+ All you need is the stock's symbol that interests you.
+ .
+ Major Features:
+  * Watchlists - Monitor the evolution of a stock's price from a
+    starting price through the last trade.
+  * Portfolios - See the current gain/loss calculation for a set of stocks.
+  * Charts - View dynamic, historical price charts for monitored stocks.
+ .
+ Homepage: http://www.grism.org

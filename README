@@ -1,0 +1,26 @@
+
+Grism - A Stock Market Observation Tool
+
+
+Homepage: http://www.grism.org
+
+Grism allows you to track your favorite stocks in one of 2 modes:
+
+1. Watchlist - See the stock's current price as well as a watch start
+price so you can track how the stock has done since you began watching
+it.
+
+2. Portfolio - See the stock's current price as well as the price at
+which it was purchased, the number of shares involved and gain/loss
+calculations.
+
+
+Grism currently uses the services provided by Yahoo! Finance to
+retrieve current stock price quotes.  A special Ruby module
+(YahooFinance) is used and also available as a separte module on
+rubyforge.org.
+
+Grism is written in Ruby and GTK+ and is release as free software under the GPL license version 2.
+
+
+Please send any comments or bug reports to "nick at transparentech dot com".

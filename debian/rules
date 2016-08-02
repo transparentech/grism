@@ -1,0 +1,56 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+RUBY_VERSION=1.8
+RUBY=/usr/bin/ruby$(RUBY_VERSION)
+RUBYLIBDIR=/usr/lib/ruby/1.8
+
+config: config-stamp
+config-stamp:
+	dh_testdir
+	$(RUBY) setup.rb config --installdirs=std --librubyver=$(RUBYLIBDIR)
+	touch config-stamp
+
+build: build-stamp
+build-stamp: config
+	dh_testdir
+	$(RUBY) setup.rb setup
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp config-stamp
+	$(RUBY) setup.rb distclean
+	rm -f .config-*
+	# Reset first line of bin/grism to the original line
+	sed -i -e '1s/.*/#!\/usr\/bin\/ruby/' bin/grism
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+	$(RUBY) setup.rb install --prefix=debian/grism
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installman -pgrism debian/grism.1
+	dh_install
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: build install
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean install binary-indep binary-arch binary

@@ -1,0 +1,3 @@
+module GRISM
+  FPATH = '.'
+end

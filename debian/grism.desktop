@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+Name=Grism
+GenericName=Grism
+Comment=Stock market observation tool
+Exec=/usr/bin/grism
+Icon=/usr/share/pixmaps/grism.xpm
+Terminal=false
+Categories=Finance;Office;

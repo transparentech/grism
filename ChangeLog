@@ -1,0 +1,497 @@
+2007-12-08  Nicholas Rahn  <nick@transparentech.com>
+	* packaging/source/package.rb: Bugfix typeo.
+	* all ruby source files: Update copyright notice to 2007.
+	* VERSION: 0.9.0
+	
+2007-12-04  Nicholas Rahn  <nick@transparentech.com>
+	* packaging/source/package.rb: Updated with new packaging directory structure and include debian files.
+	
+2007-11-10  Nicholas Rahn  <nick@transparentech.com>
+	* packaging: make directory structure for holding packaging code. Move previous packaging scripts/files into new structure. Add windows packaging files (NSIS, etc).
+	* grism.rb: rework the initialization so that it also works as a windows executable.
+	* grism/AboutDialog.rb: explicitly set the name of the application.  This does not seem to be taken into account in recent versions of gtk/gnome, but works on windows.
+	* grism/grism_prefs.rb: don't include the Application Data directory twice on windows config dir.
+	* grism/grism_iu_helpers.rb: catch explicitly Exception.
+	
+2007-11-03  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Specify 'Grism' as name of application.
+	* grism.rb: Rework the initialization and require steps in order to 1) popup error dialogs if there were problems 2) perform the windows setup if on a MS platform.
+	* grism/extern/yahoofinance.rb: Remove debugging output.
+	* grism/grism_prefs.rb: Add windows_exe_setup method. Popup dialog if we can't create proper config directory.
+	* grism/load_requires.rb: Don't require previously required files.
+	
+2007-10-23  Nicholas Rahn  <nick@transparentech.com>
+	* grism.rb: Comment about error dialogs.
+	* grism/GenericDialog.rb: Add force_hid method.
+	* grism/GrismFolderTypeWidget.rb: Allow error blocks to be passed to the refersh method.
+	* grism/InfoBar.rb: Call an error block if there was an exception executing the long running action.
+	* grism/PortfolioDialog.rb: Only do the response_verification if the method is :add.
+	* grism/PortfolioWidget.rb: Display the yahoo error dialog if we could not get quotes from yahoo.
+	* grism/WPListWidget.rb: Add an errorblock for downloading chart data.
+	* grism/WatchListStore.rb: Remove the begin/rescue when getting quotes.
+	* grism/WatchListWidget.rb: Display the yahoo error dialog if we could not get quotes from yahoo.
+	* grism/grism_prefs.rb: Use the APPDATA environment variable if on windows to find the base directory for Grism preferences.
+	* grism/grism_ui_helpers.rb: Add methods yahoo_dialog_rescue and yahoo_problem_dlg.
+
+2007-09-15  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Add timeout options to preferences dialog.
+	* grism/PreferencesDialog.rb: Add the timeout options.
+	* grism/grism_prefs.rb: Add the timeout options.
+	* grism/extern/yahoofinance.rb: Use the grism tintout preferences.
+	
+2007-09-15  Nicholas Rahn  <nick@transparentech.com>
+	* grism/grism_prefs.rb: Change the default location for configuration files on the windows platform. We still support the old location, but the new location takes priority and all new instances will use it.
+	
+2007-09-05  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioHistoryDialog.rb: New dialog for managing portfolio history entries.
+	* grism/grism.glade: Add new portfolio history dialog.
+	* grism.rb: Add portfolio history dialog.
+	* grism/load_requires.rb: Add portfolio history dialog.
+	* grism/PortfolioDialog.rb: Minor tweaks to date display format.
+	* grism/PortfolioHistoryStore.rb: add, modify, remove and save methods.
+	* grism/PortfolioWidget.rb: use either the portfolio history or the standard portfolio functionality from the toolbar depending on which view is visible.
+	* grism/extern/yahoofinance.rb: Use the new download host.
+	* grism/grism_constants.rb: update menu constansts for portfolio history usage.
+	
+2007-07-31  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioHistoryStore.rb: New liststore for the portfolio_history table.
+	* images/stock_new-address-book.png: New icon for the portfolio history view.
+	* grism.glade: Update action bar for new portfolio history view.
+	* grism.rb: Use folder.switch_to_me
+	* grism/GrismFolderTypeWidget.rb: implement switch_to_me
+	* grism/GrismListStore.rb: add 2 "abstract" methods; static_row? and get_action_opts_for_iter.
+	* grism/PortfolioStore.rb: add history_changed signal; add get_action_opts_for_iter.
+	* grism/PortfolioWidget.rb: add hist_store and use as model for fview_ext; add new history icon; reload history view on history_changed signal; connect to hist_view_shown and pf_view_shown; add columns to the fview_ext table to display the portfolio history; add get_action_opts_for_iter.
+	* grism/WPListWidget.rb: add new *_shown signals; use @selected_fview instead of @fview; call the *_shown signals when switching to different views; propogate selection changes with selection_changed_in_fview and selection_changed_in_fview_ext; add switch_to_me; remove old sensitivity methods in favor of new methods; add get_action_opts_for_iter; don't set the @fview_ext model in set_store.
+	* grism/WatchListStore.rb: add get_action_opts_for_iter
+	* grism/WatchListWidget.rb: set the @fview_ext model; hide the new portfolio specific action bar buttons; sync selection in fviews using selection_changed_in_fview, selection_changed_in_fview_ext and sync_view_selection.
+	* grism/extern/yahoofinance.rb: add some debugging code, but connect timeout not working on socket.
+	* grism/grism_constants.rb: add HISTORY_ICON_24; menu options.
+	* grism/grism_ui_helpers.rb: add menu_stock_sensitivity_opts, btn_sensitivity methods; don't connect folder to has_selected signal as this is done differently now.
+	* grism/load_requires.rb: require PortfolioHistoryStore.rb
+
+2007-07-18  Nicholas Rahn  <nick@transparentech.com>
+	* grism.rb: Support for renameing symbols.
+	* grism.glade: New renamedialog for changing symbol names; Menu item "Change symbol...".
+	* grism/GrismFolderTypeWidget.rb: add rename method.
+	* grism/PortfolioStore.rb: new rename method; save symbol name.
+	* grism/WatchListStore.rb: new rename method; save symbol name.
+	* grism/PortfolioWidget.rb: new rename method to run RenameDialog.
+	* grism/WatchListWidget.rb: new rename method to run RenameDialog.
+	* grism/extern/yahoofinance.rb: test some timeout code when not connected to internet; doesn't work so use old code.
+	* grism/grism_ui_helpers.rb: make rename_btn sensitive with other Stock menu items.
+	* grism/load_requires.rb: require new RenameDialog.rb.
+	* package.rb: add new RenameDialog.rb
+
+2007-07-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PreferencesDialog.rb: New dialog for managing the prefrences, including new proxy settings.
+	* grism/PreferencesIconBar.rb: Add new icon for "internet" options.
+	* grism/extern/yahoofinance.rb: Upgrade with newer version which includes proxy support.
+	* grism/grism_constants.rb: Add new "internet" icon definition.
+	* grism/grism_prefs.rb: Add new internet preferences which are saved to config file.
+	* grism/grism_ui_helpers.rb: Add init_proxy_settings function for setting the ENV[http_proxy] variable from $PREFS.
+	* grism/load_requires.rb: Require new file during load.
+	* images/stock_internet.png: New icon for internet settings in preferences dialog.
+	* grism.rb: Use the new PreferencesDialog.
+	* grism.glade: Add the internet tab in the preferences dialog.
+	
+2007-03-07  Nicholas Rahn  <nick@transparentech.com>
+	* grism/extern/yahoofinance.rb: upgrade to 1.2.1 to solve charting data problem due to yahoo! finance format change.
+	* grism/chart/db.rb: bug fix get_table_symbol for stock symbols starting with a number (like those from HK and China).
+	* grism/WatchListStore.rb: fix set_row_column to take a path rather than an iter.
+	* grism/WatchListWidget.rb: fix editWatchlistColumn to pass the path rather than an iter.
+	* VERSION: 0.8.1
+	
+2006-11-12  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: 0.8
+	* package.rb: Updated file list for this new relesae.
+	* grism_ui_helpers.rb: Added output for config upgrade; added to_X to all elements of CSV array so they don't get Marshaled as CSV objects; Add chomp! when parsing old CSV files.
+	* grism/extern/mongoose: switch all file opens to be in binary mode. Did not work on windows until we use 'rb', 'wb' or fptr.binmode.
+	
+2006-11-11  Nicholas Rahn  <nick@transparentech.com>
+	* all: Update the file header to contain the full description and license.
+	* grism/WatchListDialog.rb: Specifically set the important icon in the important check box.
+	* grism/AboutDialog.rb: New dialog for the about dialog.
+	* grism.rb: Use the new AboutDialog.
+	* grism.glade: Allow float in pfdialog - # of shares.
+	* grism/WatchListDialog.rb: Use a hash as args/ret rather than an array.
+	* grism/WatchListWidget.rb: Use a hash as args/ret for the wldialog.
+	
+2006-10-31  Nicholas Rahn  <nick@transparentech.com>
+	* Trick-or-Treat?
+	* grism.glade: Work on the about dialog.
+	* grism.rb: Load the about dialog logo.
+	* grism/grism_constants.rb: Add the ABOUT_LOGO constant.
+	* images/bull-logo-100x100.png: new about logo.
+	
+2006-10-31  Nicholas Rahn  <nick@transparentech.com>
+	* grism/mongoose_db.rb: Change the :transdate column of the PortfolioHistory table to a non-indexed column.  Two indexes caused db corruption problems when grism would crash; Added :typecolumns to PortfolioHistory table for future use.
+	* grism/PortfolioStore.rb: initialize the :typecolumns column in the new PortfolioHistory row.
+	* grism/grism_ui_helpers.rb: When deleting a Portfolio, make sure to delete all related entries in the PortfolioHistory table.
+	
+2006-10-30  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Change portfolio dialog shares spin button to use sensible step values; remove testing button.
+	* grism/GenericDialog.rb: Fix bugs when passing args to methods.
+	* grism/PortfolioDialog.rb: Pass a Hash in args; set default costs from preferences.
+	* grism/PortfolioStore.rb: remove unused code; add usecash_changed signal; perform "today" change calculation differently base on if the stock was added today or not.
+	* grism/PortfolioWidget.rb: manage the cash management button based on whether we are using a cash line or not; pass prefs to portfolio dialog.
+	
+2006-10-30  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Work on the advanced options for portfolios.
+	* grism/GenericDialog.rb: Support hashed args; additional methods for controlling behavior at various stages of the run (before_hide, after_hide, before_block, after_block).
+	* grism/GrismListStore.rb: new set/get_preferences methods.
+	* grism/PortfolioStore.rb: set_preferences for advanced preferences; don't use a filtered list store, just the standard one; add/remove cash line; split out log_history_event from cash_transfer;
+	* grism/WPListPropertiesDialog.rb: use hashed args (args and ret) for clearer code; advanced prefs management; close expander after hiding.
+	* grism/WPListWidget.rb: pass the preferences to the folderdialog; set_preferences method.
+	* grism/grism_ui_helpers.rb: pass the preferences to the folder dialog; set_preferences after folderdialog is done.
+
+2006-10-24  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Tweaks to cash dialog.
+	* grism/GrismListStore.rb: Don't inherit from Gtk::ListStore, but include one as a data member.
+	* grism/PortfolioStore.rb: Make the internal ListStore a TreeModelFilter in order to remove the cash line when configured so.
+	* grism/PortfolioWidget.rb: Updates for PortfolioStore not inheriting from Gtk::ListStore.
+	* grism/WatchListStore.rb: Updates to use internal ListStore rather than inheriting from one.
+	* grism/WPListPropertiesDialog.rb: Always start window with advanced expander closed.
+	* grism/extern/yahoofinance.rb: Improve (again) the exception handling for timeouts. Catch an Exception rather than default which seems to miss the Timeout::Error.
+	* grism/grism_signal.rb: Make more dynamic by allowing calling init_signals more than once.
+
+2006-10-21  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioDialog.rb: Fixed for new multi-use (add,modify,remove); response_ok and response_verification return hash; cache symbol and ptype;
+	* grism/PortfolioStore.rb: store position type (ptype) and daily value change (valueChange); support shorted stocks which reworked the row and total calculations; supports selling only a portion of a position.
+	* grism/PortfolioWidget.rb: change column names to 'Today' and 'Overall'; add column 'Today $'; update for hash returned from PortfolioDialog.
+	* grism/extern/yahoofinance.rb: new comments and try to catch some exceptions.
+	* grism/mongoose_db.rb: Add the positiontype column to Portfolio table.
+	* grism/grism_ui_helpers: Set positiontype column when creating a Portfolio from the old CSV files.
+	
+2006-10-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: wplistdialog position=center on parent.
+	* grism/WPListPropertiesDialog.rb: Set the parent window (transient_for=) so centering works.
+	
+2006-10-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: wplistdialog resizable=false to automatically expand/contract when the expander is activated.
+
+2006-10-02  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: wplistdialog changes to support advanced options; multi-use changes for properties dialog.
+	* grism/WPListPropertiesDialog.rb: Fix bug reported by Erik Bryn when clicking 'ok' with an empty description field; start work on advanced options.
+	* grism/PortfolioDialog.rb: Initial changes for supporting new multi-use properties dialog.
+	
+2006-09-01  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Modifications to the pfdialog to support different transaction types.
+	* grism/PortfolioDialog.rb: add a transaction type (buy/sellshort); modify setup to allow multiple uses of dialog (add,remove,modify) by hiding or desensitizing areas.
+	* grism/PortfolioWidget.rb: integrate modifications of the PortfolioDialog; Run the PortfolioDialog when removing (not yet fully implemented).
+	* grism/PortfolioStore.rb: integrate modifications of the PortfolioDialog.
+	* grism/grism_ui_helpers.rb: fix bug for importing comments with newlines.
+	
+2006-08-24  Nicholas Rahn  <nick@transparentech.com>
+	* grism/grism_ui_helpers.rb: Be sure to close the mongoose db when shutting down.  If we don't close the db, the index files are not written out and the next time we start (because there are 2 indexes on one table), the Mongoose::Database.new call will throw an exception.
+	
+2006-08-23  Nicholas Rahn  <nick@transparentech.com>
+	* grism/mongoose_db.rb: make the :transdate column an indexed column.
+	* grism/PortfolioStore.rb: insert into the PortfolioHistory table in cash_transfer; when creating a new cash row during load, don't call add_row, just do specific commands by hand to avoid calling cash_transfer.
+	
+2006-08-22  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioStore.rb: Perform a cash_transfer upon buy(add) and sell(remove); add desc parameter to cash_transfer.
+	* grism/PortfolioWidget.rb: Add new description parameter to call to @store.cash_transfer.
+	* grism/PortfolioDialog.rb: Set default cost to 10.
+	* grism.glade: tweaks.
+	* grism/mongoose_db.rb: Add :prefs column to WPList table; Add new PortfolioHistory table.
+	* grism/grism_ui_helpers.rb: Ensure new PortfolioHistory table; add :prefs when creating WPList table entry; refactor WPList.create.
+	
+2006-08-21  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Add a date widget to the cashdialog.
+	* grism/PortfolioStore.rb: Simplify cash_transfer and add a date parameter.
+	* grism/PortfolioWidget.rb: Add date parameter for cashdialog.
+	* grism/CashDialog.rb: Add date widget/parameter.
+	
+2006-08-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioWidget.rb: Hide the folder_view switching buttons in the toolbar.
+	* grism/GenericDialog.rb: Add a response_verification method, called after the response_ok method in order to provide a verification process to the data; make sure all of the dummy methods specifically ask for the dialog to be closed.
+	* grism/WatchListDialog.rb: Add a response_verification method to check for the validity of the symbol and whether it already exists in the list.
+	* grism/PortfolioDialog.rb: same; by default, now use the current price of the stock (instead of having to specify one).
+	* grism/extern/yahoofinance.rb: add the valid? method to quotes.
+	* grism/GrismListStore.rb: add the has_symbol? method; make find_symbol public.
+	* grism/WatchListWidget.rb: add parameters to the wldialog run when adding so we can do verification.
+	
+2006-08-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Add the image next to watchlist/portfolio on the parent pages.
+	* grism/ParentWidget.rb: Display the icon next to the name.
+	* grism/PortfolioStore.rb: Don't divide by zero when computing overall percentage.
+	* grism/Folders.rb: When collapsing a row, if the selection disappears because of the collapsing, select the parent; add new select_iter and select_folder methods.
+	* grism/grism_ui_helpers.rb: When adding a new wl/pf, select it after it is created; after removing a wl/pf, select the parent node.
+	* grism/FoldersStore.rb: new find_folder method.
+	* grism.rb: use renamed method from Folders.
+	
+2006-08-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism/Folders.rb: Change the way that changing folders is handled: There will always be a selection;if selection is removed, add back the old one; this helps with keeping menu sensitivity in sync.
+	* grism/grism_ui_helpers.rb: New functions menu_folder_sensitivity and menu_stock_sensitivity to replace old folder_menu_* for clairity; change all pertinant double quotes to single quotes.
+	* grism/WatchListStore.rb: Don't divide by zero when computing the percent change - this is mostly an issue when stocks are delisted or change symbols.
+	* grism.rb: use new menu_folder_sensitivity and menu_stock_sensitivity functions instead of old ones.
+	
+2006-08-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism/PortfolioWidget.rb: Connect the new cash management button to new cash_transaction method.
+	* grism/WPListWidget.rb: Moved hiding extra toolbar items to derived classes.
+	* grism/PortfolioStore.rb: New cash_transfer method to handle cash deposits and withdrawls; cash() method to get the current cash value.
+	* grism/load_requires.rb: require new CashDialog.
+	* grism/CashDialog.rb: Dialog for cash management.
+	* grism/WatchListWidget.rb: Hide extra toolbar items.
+	* grism.rb: create global cashdialog; new tooltips item that is not used; change all pertinent double quotes to single quote.
+	* grism.glade: New cashdialog and toolbar button changes.
+	
+2006-08-17  Nicholas Rahn  <nick@transparentech.com>
+	* grism/grism_constants.rb: Add constants for all icons/images.
+	* grism/PortfolioWidget.rb: Setup the toolbar icons and new buttons.
+	* grism/WPListWidget.rb: Move some icon setup to derived classes.
+	* grism/ChartWidget.rb: Use icon constants.
+	* grism/WatchListStore.rb: Use icon constants.
+	* grism/GrismFolderTypeWidget.rb: Use icon constants.
+	* grism/PreferencesIconBar.rb: Use icon constants.
+	* grism/WatchListWidget.rb: Use icon constants; setup toolbar icons.
+	* grism.rb: Use icon constants.
+	* images/gnome-finance.png: New icon for portfolio cash tb button.
+	* grism.glade: Changes to toolbar buttons.
+	
+2006-08-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/WPListWidget.rb: Move selection change synchronization to WatchListWidget.
+	* grism/grism_ui_helpers.rb: Call post_notebook_append after adding widget to notebook.
+	* grism/GrismFolderTypeWidget.rb: Add post_notebook_append to base class.
+	* grism/WatchListWidget.rb: Add selection change synchronization from WPListWidget; add post_notebook_append in order to solve initial list scrolling position and column size issues (see comment for method).
+
+2006-08-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/WatchListStore.rb: add_row supports getquote parameter, executing a block before calling set_row and calling save_row rather than save.
+	* grism/PortfolioWidget.rb: new set of methods for rendering cells based on cash, total or normal entries (renderIter*); only show details if not a static row; change button sensitivity for cash/total lines.
+	* grism/PortfolioStore.rb: shares column is now Float; add a cash line; update add_row like in WatchListStore.
+	
+2006-08-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/WPListWidget.rb: Rename data member list to store.
+	* grism/PortfolioWidget.rb: same.
+	* grism/grism_ui_helpers.rb: same.
+	* grism/FoldersStore.rb: same.
+	* grism/WatchListWidget.rb: same.
+	
+2006-08-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/WPListWidget.rb: Removed view scrolling synchronization code to WatchListWidget; Notebook no longer needed; Cleanup; moved signals to parent class.
+	* grism/WatchListWidget: Added view scrolling synchronization code in initialize method; Notebook no longer needed; Cleanup;
+	* grism/PortfolioWidget.rb: Notebook no longer needed; Cleanup;
+	* grism/ParentWidget.rb: Notebook no longer needed; cleanup.
+	* grism/Folders.rb: Call GRISM.switch_to_folder instead of folder.switch_to; don't call signal if there is no folder; cleanup.
+	* grism/grism_ui_helpers.rb: Refactor WP/Parent creation into separate function new_wp_widget; new switch_to_folder function; cleanup.
+	* grism/FoldersStore.rb: Use new refactored GRISM.new_wp_widget function.
+	* grism/GrismFolderTypeWidget.rb: Add signals; remove obsolete switch_to method; cleanup.
+	* grism.rb: Use refactored GRISM.new_wp_widget function; cleanup.
+	
+2006-08-12  Nicholas Rahn  <nick@transparentech.com>
+	* grism/grism_prefs.rb: Remove or comment out newly obsoleted code to manage the CSV files; add some comments about old CSV files; remove auto-upgrade feature for pre-Grism (YASW) config files.
+	* grism/WPListWidget.rb: Load the 24x24 image for the chart button.
+	* grism/GrismListStore.rb: Remove or comment out newly obsoleted code to manage CSV files.
+	* grism/mongoose_db.rb: Create indexes on some columns in DB tables.
+	* grism/grism_ui_helpers.rb: Replace some function calls with their in-line equivalent so we can get rid of the functions completely as they pertain to the CSV files; fix the delete_wplist_folder method to delete the elements from the watchlist/portfolio tables.
+	* grism.rb: Set the menubar image for charts; completely comment old CSV loading call.
+	* images/stock_chart-autoformat-24x24.png: Renamed from less '-24x24'.
+	* images/stock_chart-autoformat.png: New file, 16x16, for use in menubar.
+	
+2006-08-12  Nicholas Rahn  <nick@transparentech.com>
+	* Fixes for name changes from yesterday + misc cleanups.
+	* grism/grism_prefs.rb: No longer saving list of CSV files in config file.
+	* grism/WPListWidget.rb: Remove delete method (moved to grism_ui_prefs.rb); no longer using filename (obsolete), no longer using name or description (using those from store).
+	* grism/GrismListStore.rb: Remove @filename; add @wplist.
+	* grism/PortfolioStore.rb: @portfolio is not @wplist from parent.
+	* grism/WatchListStore.rb: @watchlist is not @wplist from parent.
+	* grism/load_requires.rb: fix requires for new file names.
+	* grism/grism_ui_helpers.rb: Name change fixes; Insert into WPList when creating new WL/PFs; new method delete_wplist_folder (mostly copied from WPListWidget#delete).
+	* grism/PortfolioDialog.rb: bug fix buyusemarket.
+	* grism/Folders.rb: Name change fixes.
+	* grism/MoveCopyDialog.rb: Name change fixes.
+	* grism/PortfolioWidget.rb: Name change fixes.
+	* grism/WatchListWidget.rb: Name change fixes.
+	* grism.rb: Name change fixes.
+	
+2006-08-11  Nicholas Rahn  <nick@transparentech.com>
+	* Rename a bunch of classes so that things are a bit more straight forward. Files and class/module names have been renamed.
+	* grism.glade: Rename folderdialog -> wplistdialog
+	* grism/WPListWidget.rb: renamed from FolderWidget.rb
+	* grism/GrismListStore.rb: renamed from grism_list_store.rb
+	* grism/Folders.rb: renamed from FoldersList.rb
+	* grism/FoldersStore.rb: renamed from folders.rb
+	* grism/grism_treeviews.rb: new module for treeview helper methods.
+	* grism/WPListPropertiesDialog.rb: renamed from FolderDialog.rb
+	* grism/GrismFolderTypeWidget.rb: renamed from GrismFolder.rb
+	* grism/PortfolioWidget.rb: inherit from WPListWidget.
+	* grism/WatchListWidget.rb: inherit from WPListWidget.
+	* grism/ParentWidget.rb: inherit from WPListWidget.
+	
+2006-08-11  Nicholas Rahn  <nick@transparentech.com>
+	* grism/mongoose_db.rb: Renamed from db.rb.
+	* grism/PortfolioWidget.rb: Clean-up with some name changes and dialog tweaks.
+	* grism/grism_list_store.rb: Add the find_symbol method.
+	* grism/PortfolioStore.rb: Override the list_name and list_desc methods; Re-arrange the order of the methods so to have private and protected methods. Remove find_symbol method.
+	* grism/load_requires.rb: Change the requires to load the new watchlist files rather than old, deprecated one.
+	* grism/grism_ui_helpers.rb: Improve comment on importing db.
+	* grism/WatchListStore.rb: New class to replace old WatchList list store class. This relies on the watchlist entries being stored in the mongoose database. Also reworks the API to be a bit cleaner and with some (albiet small) documentation.
+	* grism/PortfolioDialog.rb: Document and reorder the array returned from response_ok.
+	* grism/WatchListDialog.rb: Dito.
+	* grism/WatchListWidget.rb: Upgrade to use the new WatchListStore class and it's new API.
+	* grism.rb: Create the watchlists from the database rather than CSV files.
+
+2006-08-10  Nicholas Rahn  <nick@transparentech.com>
+	* grism/db.rb: New file for Mongoose database table definitions.
+	* grism/PortfolioStore.rb: New class to replace old Portfolio list store class. This relies on portfolio entries being stored in the mongoose database. Also reworks the API to be a bit cleaner and with some (albeit small) documentation.
+	* grism/PorfolioWidget.rb: Upgrade to use the new PortfolioStore class and it's new API.
+	* grism/FolderWidget.rb: Set the variables explicitly in set_list as well as in the callbacks.
+	* grism/load_requires.rb: Change the requires to load the new portfolio files rather than old, deprecated ones.
+	* grism/grism_ui_helpers.rb: Add the init_mongoose_db function.
+	* grism.rb: Call GRISM.init_mongoose_db and create the portfolios from the database rather than from the CSV files.
+	* grism/InfoBar.rb: Print out a stack trace when catching an exception while running.
+	
+2006-08-08  Nicholas Rahn  <nick@transparentech.com>
+	* Starting work on new version.
+	* Redo the requires statements, centralizing everything into a new file. 
+	* Renamed a number of files. 
+	* Moved all external, bundled files into new grism/extern directory. 
+	* Added new mongoose external project to possibly replace kirbybase.
+	* grism/load_requires.rb: New file for centralized requirements loading.
+	* grism/extern/yahoofinance.rb: Sync'ed with latest v1.2.0 version.
+	
+2006-05-04  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: v0.7.1
+	* grism/yahoofinance.rb: Re-organize the method names for historical quotes. Upgrade the downloading of historical data so that "international" market data that are available only in 200 data point chunks are completely downloaded (in multiple chunks).
+	* grism/chart/db.rb: Update to modified YahooFinance method call names.
+	
+2006-04-21  Nicholas Rahn  <nick@transparentech.com>
+	* grism/watchlist.rb: Update the PE value when a row is modified.
+	
+2006-03-21  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: v0.7.0
+	* package.rb: Add new files for this release.
+	
+2006-03-21  Nicholas Rahn  <nick@transparentech.com>
+	* grism/MoveCopyDialog.rb: New dialog for moving/copying stocks between watchlists and portfolios.
+	* grism/portfolio.rb: Refactor the csv_to_iter and iter_to_csv.
+	* grism/grism_prefs.rb: FoldersList -> Folders update.
+	* grism/PortfolioWidget.rb: Add move_to and copy_to methods.
+	* grism/WatchListWidget.rb: Add move_to and copy_to methods.
+	* grism/FoldersList.rb: Double click on entry brings up properties dialog. FoldersList -> Folders update. Remove obsoleted commented code.
+	* grism/FolderDialog.rb: Focus and select current name.
+	* grism/GenericDialog.rb: Add a 3rd type of response: other.
+	* grism/folders.rb: Add columns for visibility in copy/move dialog. Return path rather than widget from add method.
+	* grism/grism_ui_helpers.rb: FoldersList -> Folders update. Return path from new_{watchlist,portfolio}_folder methods.
+	* grism.rb: New MoveCopyDialog. FoldersList -> Folders update.
+	* grism.glade: New move/copy dialog.
+	
+2006-03-16  Nicholas Rahn  <nick@transparentech.com>
+	* grism/GrismFolder.rb: Add an extra optional parameter to support a searchable column.
+	* grism/WatchListWidget.rb: Set the symbol column to be searchable.
+	* grism.glade: Turn off search in the folderslist.
+	
+2006-03-14  Nicholas Rahn  <nick@transparentech.com>
+	* grism/GenericDialog.rb: New general dialog class. Base class for all other dialogs.
+	* grism/WatchListDialog.rb: Inherit from new GenericDialog.
+	* grism/ExportChartDialog.rb: Inherit from new GenericDialog.
+	* grism/PortfolioDialog.rb: Inherit from new GenericDialog.
+	* grism/SplitDialog.rb: Inherit from new GenericDialog.
+	* grism/FolderDialog.rb: New dialog for folder properties.
+	* grism.rb: Use new FolderDialog.
+	* grism/grism_ui_helpers: Use new FolderDialog.
+	
+	* grism/portfolio.rb: Add list_type. Get a quote for new entries.
+	* grism/watchlist.rb: Add list_type.
+	* grism/FolderWidget.rb: Use new FolderDialog for properties, saving a parse of the glade file. Add folder_type method.
+	* grism/PortfolioWidget.rb: Change list_type to folder_type.
+	* grism/WatchListWidget.rb: Change list_type to folder_type.
+	* grism/ChartWidget.rb: Update order of parameters returned from ExportChartDialog.
+	
+	* grism/grism_constants.rb: New file for general Grism constants.
+	* grism/grism_prefs.rb: Move general constants to grism_constants. Use fdr.list.list_type when saving files.
+	* grism/grismlist.rb: Allow multi-line descriptions for Folders.
+	
+2006-03-13  Nicholas Rahn  <nick@transparentech.com>
+	* grism/folders.rb: New class encapsulating the FoldersList's treestore.  We put it in its own class in order to reuse it in the move/copy tree.
+	* grism/FoldersList.rb: Remove the internal treestore in favor of the Folders object passed in at instantiation.
+	* grism/grism_ui_helpers.rb: Use Folders rather than FoldersList.
+	* grism/FolderWidget.rb: Use Folders rather than FoldersList. Remove the listiter member data.
+	* grism/grism_prefs.rb: Use Folders rather than FoldersList.
+	* grism.rb: Integrate the changes to FoldersList and the new Folders class.
+	
+2006-03-13  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Add the split and move/copy dialogs.  Add the split menu button.
+	* grism.rb: Add the split dialog usage. Signals for new menu items. Reorder signal connectors. Don't run init_db in background.
+	* grism/SplitDialog.rb: New class for the split dialog.
+	* grism/genericstore.rb: New module to encapsulate some features for generic store usage.
+	* grism/WatchListWidget.rb: Handle splits.  Play around with timeouts.
+	* grism/yahoofinance.rb: Play around with timeouts in an attempt to find why requests will sometimes hang.  Added a bit of error checking to get method.  Probably can remove extra stuff later.
+	* grism/watchlist.rb: Play around with temporary yahoofinance changes.
+	* grism/grism_ui_helpers.rb: Add the split menu button sensitivity.
+	* grism/PortfolioWidget.rb: Handle splits.  Play around with timeouts.
+	* grism/InfoBar.rb: Play around with timeouts.
+	* grism/grism_prefs.rb: Add a refresh timeout.
+	* grism/FolderWidget.rb: Prepare for generic store usage.
+	* grism/portfolio.rb: Play around with temporary yahoofinance changes. Add new total_iter? method.
+	* grism/GrismFolder.rb: Add the moveto, copyto and split methods.
+	* grism/grismlist.rb: Use the new generic list module.
+	
+2006-03-09  Nicholas Rahn  <nick@transparentech.com>
+	* grism/GrismFolder.rb:
+	* grism/FolderWidget.rb: Playing around with context menus. Putting off for now.
+	* grism/FoldersList.rb: Playing around with DnD. Putting off for now.
+	* grism/WatchListWidget.rb: Playing around with context menus and Dnd. Putting both off for now.
+
+	* grism.glade: Add the new Moving/Copying menu buttons. Rework the main menus, adding a new "Stock" menu.
+	* grism/grism_ui_helpers.rb: Adding sensitivity for new Moving/Copying menu items.
+	* grism/watchlist.rb: Refactor loading/saving CSV in preparation for moving/copying functionality.
+	* grism.rb: Improve the order of execution of the main window setup.  It's not perfect, but it's as good as it's going to get (at least right now).
+	
+2006-03-06  Nicholas Rahn  <nick@transparentech.com>
+	* grism.rb: Expand the folders and select a folder based on the config parameters so that Grism starts up in the same GUI state as when it quit the last time.
+	* grism/grism_prefs.rb: Add the folders expansion and selection perferences.
+	* grism/FolderList.rb: Add methods for folder expansion and selection control.
+	
+2006-03-05  Nicholas Rahn  <nick@transparentech.com>
+	* grism/grism_prefs.rb: Add the window size preferences.
+	* grism.rb: Set the window to the prefered size based on the preferences. Remember the window size when it changes.
+	* grism.glade: Remove the default size for the main window.
+	
+2006-03-05  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: 0.6.0 released!
+	* package.rb: Add the new files for this release.
+	
+2006-03-04  Nicholas Rahn  <nick@transparentech.com>
+	* grism/chart/kirbybase.rb: Remove the check for server? when 	doing the delay_index_creation. This means that index creation 	will be done on first access to a table, rather than all at 	once at the beginning.
+	* grism/watchlist.rb: Don't mark that the ratio view has been 	filled if an excpetion was caught.
+	* grism/WatchListDialog.rb: New class that manages the 	watchlist's details dialog.
+	* grism/PortfolioDialog.rb: New class that manages the 	portfolio's details dialog.
+	* grism.rb: Instantiate a global WatchListDialog and 	PortfolioDialog.
+	* grism/WatchListWidget.rb: Use the new global WatchListDialog 	instead of having a separate one for each WatchList.  This 	saves one libglade parsing for each Watchlist, speeding up 	startup ever so slightly.
+	* grism/PortfolioWidget.rb: Use the new global PortfolioDialog 	instead of having a separate one for each Portfolio.  This 	saves one libglade parsing for each Portfolio, speeding up 	startup ever so slightly.
+	
+2006-03-02  Nicholas Rahn  <nick@transparentech.com>
+	* grism/ChartWidget.rb: Don't set the graph's data if there 	are no quotes available from the DB. Fix bug when displaying 	the label containing unescaped HTML characters.
+	* grism/chart/chart.rb: Render a "No Data Available!" when 	there is no price data available to display.
+	* grism.glade: Add the important toggle to wldialog.
+	* grism/watchlist.rb: Set the important column when adding or 	editing an entry.
+	* grism/WatchListWidget.rb: Use the watchlist's important 	column.
+	* grism/chart/db.rb: Set the delay_index_creation to true when 	creating a KirbyBase. This doesn't have any effect yet, 	however.
+	
+2006-02-27  Nicholas Rahn  <nick@transparentech.com>
+	* grism/GrismFolder.rb: Add the addPixbufCol method.
+	* grism/watchlist.rb: Add the important and importantPix 	columns. Add the toggle_important method. Add the important 	column to the saved/loaded CSV file.
+	* grism/WatchListWidget.rb: Add the "important" column.
+	
+2006-02-25  Nicholas Rahn  <nick@transparentech.com>
+	* grism.glade: Reworked the layout of the porfolio entry 	details dialog. Added a comment section and removed the 	current price area.
+	* grism/portfolio.rb: Allow comments for each pf entry and 	saving/loading them from the config file. Removed changing the 	current price via the dialog ({add,edit,set}_entry).
+	* grism/PortfolioWidget.rb: Use the new comment field of the 	dialog and remove use of the dialog's current price.
+	* grism/WatchlistWidget.rb: Renamed the "Dividend Yield" 	column to just "Yield" to save space.
+	
+2006-02-24  Nicholas Rahn  <nick@transparentech.com>
+	* grism/portfolio.rb: Change the way the today_total (%) is 	calculated. Rather than using a straight average of the daily 	percent changes of each stock, calculate the change in value 	of the portfolio. This is slightly different, but seems more 	consistent.
+	* grism/FolderWidget.rb: Double-clicking in the extended view 	TreeView (ratio view) also brings up the details dialog for 	the given stock.
+	* install.bat: Updates for a completely smooth install on 	windows. Rename main grism file to grism.rbw so we don't start 	a DOS window with the Grism main window. .rb files are 	executable so we don't need the ruby to run setup.rb.
+
+2006-02-21  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: 0.5.1 released.
+	
+2006-02-21  Nicholas Rahn  <nick@transparentech.com>
+	* grism/chart/db.rb: replace '.' with '_' in get_table_symbol
+	
+2006-02-20  Nicholas Rahn  <nick@transparentech.com>
+	* VERSION: 0.5.0 released!
+

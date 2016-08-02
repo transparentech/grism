@@ -1,0 +1,17 @@
+Grism requires the following software:
+
+- ruby
+- GTK2 (2.8 or later)
+- ruby-gtk2 (0.14.0 or later, including libglade; ruby-gnome2 not required.)
+
+
+Quick Start
+
+% ruby setup.rb
+
+
+Detailed Installation Process
+
+See the detailed Grism installation page here:
+
+  http://www.grism.org/install.html
