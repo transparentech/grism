@@ -1,6 +1,4 @@
-
-Grism - A Stock Market Observation Tool
-
+# Grism - A Stock Market Observation Tool
 
 Homepage: http://www.grism.org
 
@@ -14,13 +12,15 @@ it.
 which it was purchased, the number of shares involved and gain/loss
 calculations.
 
-
 Grism currently uses the services provided by Yahoo! Finance to
-retrieve current stock price quotes.  A special Ruby module
-(YahooFinance) is used and also available as a separte module on
-rubyforge.org.
+retrieve current stock price quotes.
 
-Grism is written in Ruby and GTK+ and is release as free software under the GPL license version 2.
+Grism is written with the Ruby-GTK bindings (from [Ruby GNOME2](https://ruby-gnome2.osdn.jp/)).
 
+The latest version is 0.9.0.
 
-Please send any comments or bug reports to "nick at transparentech dot com".
+#### NOTE
+
+This project is no longer maintained.
+
+For an alternative, see the [portfolio management software - StockMarketEye](https://www.stockmarketeye.com/linux).
